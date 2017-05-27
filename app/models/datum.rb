@@ -1,3 +1,3 @@
 class Datum < ApplicationRecord
-  belongs_to :incetance
+  belongs_to :instance
 end
