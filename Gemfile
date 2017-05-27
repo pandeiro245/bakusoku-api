@@ -75,4 +75,7 @@ gem 'slim-rails'
 
 
 # HTTP CLIENT
+gem 'oauth2'
 gem 'faraday'
+gem 'faraday_middleware'
+
