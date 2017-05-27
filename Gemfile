@@ -73,3 +73,6 @@ gem 'slim-rails'
 # gem 'kintone_sync' , github: 'mashupwork/kintone_sync'
 # gem 'chatwork'
 
+
+# HTTP CLIENT
+gem 'faraday'
