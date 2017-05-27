@@ -31,10 +31,12 @@ class Api::Freee < Api
   end
 
   def me
-    get('/api/1/users/me', {companies: true})
+    return @me if @me
+    @me = get('/api/1/users/me', {companies: true})
   end
 
   def company_id
-    me['user']['companies'].first['id']
+    return @company_id if @company_id
+    @company_id = me['user']['companies'].first['id']
   end
 end
