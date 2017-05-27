@@ -1,7 +1,7 @@
 class Api::Rocketchat
-  def initialize(provider = nil)
-    provider = Provider.find_by(key: 'rocketchat') unless provider.present?
-    @host = provider.host
+  def initialize(instance = nil)
+    instance = Instance.find_by(key: 'rocketchat') unless instance.present?
+    @host = instance.host
     @user = User.where(host: @host).where.not(token: nil).first
   end
 
