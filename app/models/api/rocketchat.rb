@@ -1,28 +1,42 @@
 class Api::Rocketchat
-  def initialize(instance = nil, offline=false)
-    @offline = offline
+  def initialize(instance = nil)
     unless instance.present?
       instance = Instance.find_by(provider_name: 'rocketchat')
     end
     @instance = instance
     @user = User.where(instance_id: instance.id).where.not(token: nil).first
+    @site = "https://#{@instance.host}"
   end
 
   def login(user, pass)
-    res = `curl https://#{@instance.host}/api/v1/login \
-         -d "username=#{user}&password=#{pass}"`
-    res = JSON.parse(res)
+    uri = '/api/v1/login'
+    conn = Faraday.new(:url => @site, :ssl => {:verify => false})
+    req = conn.post uri, {username: user,
+                          password: pass}
+    res = JSON.parse(req.body)
+
     @user = User.find_or_create_by(
-      name: user,
+      name:        user,
       instance_id: @instance.id
     )
-    @user.key = res['data']['userId']
+    @user.key   = res['data']['userId']
     @user.token = res['data']['authToken']
     @user.save!
     @user
   end
 
   def channels
+    conn = Faraday.new(:url => "https://#{@instance.host}", :ssl => {:verify => false})
+    req = conn.post '/api/v1/channels.list', {instance_id: @instance.id,
+                                              method: method,
+                                              req: nil}
+    res = JSON.parse(req.body)
+    @user = User.find_or_create_by(
+      name: user,
+      instance_id: @instance.id
+    )
+
+
     path = '/api/v1/channels.list'
     method = 'GET'
     params = {
