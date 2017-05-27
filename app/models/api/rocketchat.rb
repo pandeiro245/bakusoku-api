@@ -2,8 +2,7 @@ class Api::Rocketchat
   def initialize(instance = nil, offline=false)
     @offline = offline
     unless instance.present?
-      provider = Provider.find_by(name: 'rocketchat')
-      instance = Instance.find_by(provider_id: provider.id)
+      instance = Instance.find_by(provider_name: 'rocketchat')
     end
     @instance = instance
     @user = User.where(instance_id: instance.id).where.not(token: nil).first
@@ -38,7 +37,7 @@ class Api::Rocketchat
            -H "X-User-Id: #{@user.key}" \
                 https://#{@instance.host}#{path}`
       params[:res] = res
-      datum.create(params)
+      datum = Datum.create(params)
     end
     JSON.parse(datum.res)
   end

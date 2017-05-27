@@ -1,0 +1,1 @@
+{"rocketchat":{"GET":{"/api/v1/channels.list":{"requests":{},"responses":{"channels":[{"name":{},"t":{},"msgs":{},"u":{"_id":{},"username":{}},"customFields":{},"ts":{},"ro":{},"sysMes":{},"_updatedAt":{},"_id":{},"username":{},"lm":{},"usernames":[{}]}],"count":{},"offset":{},"total":{},"success":{}}}}}}
