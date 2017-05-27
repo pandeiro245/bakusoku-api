@@ -52,3 +52,23 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+
+# Original
+gem 'rspec-rails'
+gem 'dotenv-rails'
+gem 'slim-rails'
+# gem 'rubyXL'
+
+# API
+# gem 'omniauth-oauth2', '1.3.1'
+# gem 'omniauth-ruffnote', github: 'ruffnote/omniauth-ruffnote'
+# gem 'omniauth-timecrowd', github: 'pandeiro245/omniauth-timecrowd'
+
+# gem 'google_drive', '1.0.5'
+# gem 'google_calendar'
+# gem 'google-api-client'
+# gem 'github_api'
+# gem 'kintone'
+# gem 'kintone_sync' , github: 'mashupwork/kintone_sync'
+# gem 'chatwork'
+
