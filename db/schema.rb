@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170527075556) do
+ActiveRecord::Schema.define(version: 20170527074947) do
 
   create_table "data", force: :cascade do |t|
     t.integer "instance_id"
@@ -24,18 +24,10 @@ ActiveRecord::Schema.define(version: 20170527075556) do
   end
 
   create_table "instances", force: :cascade do |t|
+    t.string "provider_name"
     t.string "name"
     t.string "host"
     t.text "memo"
-    t.integer "provider_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["provider_id"], name: "index_instances_on_provider_id"
-  end
-
-  create_table "providers", force: :cascade do |t|
-    t.string "name"
-    t.text "structure"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

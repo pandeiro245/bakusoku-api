@@ -1,8 +1,7 @@
 class Api::Rocketchat
   def initialize(instance = nil)
     unless instance.present?
-      provider = Provider.find_by(name: 'rocketchat')
-      instance = Instance.find_by(provider_id: provider.id)
+      instance = Instance.find_by(provider_name: 'rocketchat')
     end
     @instance = instance
     @user = User.where(instance_id: instance.id).where.not(token: nil).first
@@ -35,19 +34,38 @@ class Api::Rocketchat
     @user
   end
 
-  def get_channels
+  def channels
     path = '/api/v1/channels.list'
-    res = `curl -H "X-Auth-Token: #{@user.token}" \
-         -H "X-User-Id: #{@user.key}" \
-              https://#{@instance.host}#{path}`
-    datum = Datum.find_or_create_by!(
+    method = 'GET'
+    params = {
       instance_id: @instance.id,
       path: path,
-      method: 'GET',
+      method: method,
       req: nil,
-    )
-    datum.res = res
-    datum.save!
-    res = JSON.parse(res)
+    }
+    datum = Datum.find_by(params)
+    unless datum
+      res = `curl -H "X-Auth-Token: #{@user.token}" \
+           -H "X-User-Id: #{@user.key}" \
+                https://#{@instance.host}#{path}`
+      params[:res] = res
+      datum = Datum.create(params)
+    end
+    JSON.parse(datum.res)
+  end
+
+  def histries
+    path = '/api/v1/channels.history'
+    method = 'GET'
+    channels.each['channels'].each do |channel|
+      room_id = channel['_id']
+      params = {
+        instance_id: @instance.id,
+        path: path,
+        method: method,
+        req: {roomId: room_id}.to_json,
+      }
+    end
   end
 end
+
