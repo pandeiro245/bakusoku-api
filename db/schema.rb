@@ -10,23 +10,44 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170527053028) do
+ActiveRecord::Schema.define(version: 20170527075556) do
+
+  create_table "data", force: :cascade do |t|
+    t.integer "instance_id"
+    t.string "path"
+    t.string "method"
+    t.text "req"
+    t.text "res"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["instance_id"], name: "index_data_on_instance_id"
+  end
 
   create_table "instances", force: :cascade do |t|
     t.string "name"
     t.string "host"
     t.text "memo"
+    t.integer "provider_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["provider_id"], name: "index_instances_on_provider_id"
+  end
+
+  create_table "providers", force: :cascade do |t|
+    t.string "name"
+    t.text "structure"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "name"
-    t.string "host"
-    t.string "token"
+    t.integer "instance_id"
     t.string "key"
+    t.string "name"
+    t.string "token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["instance_id"], name: "index_users_on_instance_id"
   end
 
 end
