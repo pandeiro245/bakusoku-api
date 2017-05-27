@@ -3,6 +3,10 @@ class Provider
     @structures = JSON.parse(File.open('providers.json').read)
   end
 
+  def structures
+    @structures
+  end
+
   def structure(name)
     @structures[name]
   end

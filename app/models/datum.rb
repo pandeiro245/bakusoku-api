@@ -2,7 +2,7 @@ class Datum < ApplicationRecord
   belongs_to :instance
 
   def responses
-    structure(JSON.parse(res)) # hash
+    structure(JSON.parse(res)) # Hash
   end
 
   def provider_name
