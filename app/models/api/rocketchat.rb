@@ -25,21 +25,20 @@ class Api::Rocketchat
 
   def get_channels
     path = '/api/v1/channels.list'
-    datum = Datum.find_or_create_by!(
+    params = {
       instance_id: @instance.id,
       path: path,
       method: 'GET',
       req: nil,
-    )
-    if @offline
-      res = datum.res 
-    else
+    }
+    datum = Datum.find_by(params)
+    unless datum
       res = `curl -H "X-Auth-Token: #{@user.token}" \
            -H "X-User-Id: #{@user.key}" \
                 https://#{@instance.host}#{path}`
-      datum.res = res
-      datum.save!
+      params[:res] = res
+      datum.create(params)
     end
-    JSON.parse(res)
+    JSON.parse(datum.res)
   end
 end
