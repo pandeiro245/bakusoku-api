@@ -10,19 +10,21 @@ class Api
       if @api_host
         @instance.host = @api_host
       else
-        puts "Please input the consumer_key from #{@secret_url}"
+        puts "Please input the host"
         @instance.host = $stdin.gets.chomp
       end
     end
 
-    unless @instance.consumer_key
-      puts "Please input the consumer_key from #{@secret_url}"
-      @instance.consumer_key = $stdin.gets.chomp
-    end
+    unless ['rocketchat'].include?(@instance.provider_name)
+      unless @instance.consumer_key
+        puts "Please input the consumer_key from #{@secret_url}"
+        @instance.consumer_key = $stdin.gets.chomp
+      end
 
-    unless @instance.consumer_secret
-      puts 'Please input the consumer_secret'
-      @instance.consumer_secret = $stdin.gets.chomp
+      unless @instance.consumer_secret
+        puts 'Please input the consumer_secret'
+        @instance.consumer_secret = $stdin.gets.chomp
+      end
     end
 
     @instance.save!
@@ -30,7 +32,8 @@ class Api
     options = {
       site: "https://#{@instance.host}",
       authorize_url: '/oauth/authorize',
-      token_url: '/oauth/token'
+      token_url: '/oauth/token',
+      ssl: {verify: false}
     }
 
     @client = OAuth2::Client.new(
@@ -45,7 +48,7 @@ class Api
     login
   end
 
-  def get(path, req)
+  def get(path, req={})
     params = {
       instance_id: @instance.id,
       path: path,
@@ -57,6 +60,8 @@ class Api
 
     uri = path
     uri += '?' + req.to_a.map{|i| "#{i.first}=#{i.last}" }.join('&') if req.present?
+
+    puts "uri is #{uri}"
 
     unless datum
       params[:res] = @api.get(uri).response.env[:body].to_json
