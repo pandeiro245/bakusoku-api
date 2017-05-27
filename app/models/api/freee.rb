@@ -1,12 +1,13 @@
-class Api::Freee
-  def initialize(instance = nil)
-    unless instance.present?
-      instance = Instance.find_by(provider_name: 'freee')
-    end
-    @instance = instance
+class Api::Freee < Api
+  def initialize
+    @token_host = 'secure.freee.co.jp'
+    @api_host   = 'api.freee.co.jp'
+    @secret_url = 'https://secure.freee.co.jp/oauth/applications'
+    super
   end
 
-  def login
-
+  def me
+    get('/api/1/users/me', {companies: true})
   end
 end
+

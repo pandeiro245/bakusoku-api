@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170527074947) do
+ActiveRecord::Schema.define(version: 20170527135316) do
 
   create_table "data", force: :cascade do |t|
     t.integer "instance_id"
@@ -30,6 +30,8 @@ ActiveRecord::Schema.define(version: 20170527074947) do
     t.text "memo"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "consumer_key"
+    t.string "consumer_secret"
   end
 
   create_table "users", force: :cascade do |t|

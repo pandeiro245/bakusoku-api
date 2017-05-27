@@ -17,7 +17,7 @@ class Provider
       @structures[pname] ||= {}
       @structures[pname][datum.method] ||= {}
       @structures[pname][datum.method][datum.path] = {
-        requests: {}, 
+        requests: datum.requests, 
         responses: datum.responses
       }
     end
