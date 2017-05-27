@@ -23,12 +23,13 @@ class Api::Rocketchat
     @user
   end
 
-  def get_channels
+  def channels
     path = '/api/v1/channels.list'
+    method = 'GET'
     params = {
       instance_id: @instance.id,
       path: path,
-      method: 'GET',
+      method: method,
       req: nil,
     }
     datum = Datum.find_by(params)
@@ -41,4 +42,19 @@ class Api::Rocketchat
     end
     JSON.parse(datum.res)
   end
+
+  def histries
+    path = '/api/v1/channels.history'
+    method = 'GET'
+    channels.each['channels'].each do |channel|
+      room_id = channel['_id']
+      params = {
+        instance_id: @instance.id,
+        path: path,
+        method: method,
+        req: {roomId: room_id}.to_json,
+      }
+    end
+  end
 end
+
