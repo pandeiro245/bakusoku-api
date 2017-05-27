@@ -8,22 +8,9 @@ class Api::Rocketchat
   end
 
   def login(user, pass)
-    # conn = Faraday.new(:url => 'http://deroris.net/') 
-    # response = conn.get '/'                 # GET http://www.example.com/users' 
-    # return response;
-
-    # raise "hogehoge".inspect
-
     conn = Faraday.new(:url => "https://#{@instance.host}", :ssl => {:verify => false})
-    req2 = conn.get do |req|                           # GET http://sushi.com/search?page=2&limit=100
-      req.url '/api/v1/login', :username => user, :password => pass
-    end
-
-    return req2;
-
-    res = `curl https://#{@instance.host}/api/v1/login \
-         -d "username=#{user}&password=#{pass}"`
-    res = JSON.parse(res)
+    req = conn.post '/api/v1/login', username: user, password: pass
+    res = JSON.parse(req.body)
     @user = User.find_or_create_by(
       name: user,
       instance_id: @instance.id
