@@ -11,8 +11,8 @@ class Api::Rocketchat
   def login(user, pass)
     uri = '/api/v1/login'
     conn = Faraday.new(:url => @site, :ssl => {:verify => false})
-    req = conn.post uri, {username: user,
-                          password: pass}
+    req = conn.post(uri, {username: user,
+                          password: pass})
     res = JSON.parse(req.body)
 
     @user = User.find_or_create_by(
@@ -26,16 +26,15 @@ class Api::Rocketchat
   end
 
   def channels
-    conn = Faraday.new(:url => "https://#{@instance.host}", :ssl => {:verify => false})
-    req = conn.post '/api/v1/channels.list', {instance_id: @instance.id,
-                                              method: method,
-                                              req: nil}
-    res = JSON.parse(req.body)
-    @user = User.find_or_create_by(
-      name: user,
-      instance_id: @instance.id
-    )
+    uri = '/api/v1/channels.list'
+    method = 'GET'
+    conn = Faraday.new(:url => @site, :ssl => {:verify => false})
+    req = conn.get(uri, {instance_id: @instance.id,
+                         method:      method,
+                         req:         nil})
 
+
+    return req.body
 
     path = '/api/v1/channels.list'
     method = 'GET'
