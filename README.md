@@ -1,5 +1,7 @@
 # README
 
+Anything api moc.
+
 `Api::Freee.new.me` とかしてみてください
 
 
