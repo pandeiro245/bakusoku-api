@@ -8,6 +8,7 @@ class Api::Rocketchat
       name: user,
       host: host
     )
+    user.key = res['data']['userId']
     user.token = res['data']['authToken']
     user.save!
   end
