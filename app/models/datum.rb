@@ -1,7 +1,13 @@
 class Datum < ApplicationRecord
   belongs_to :instance
 
+  def requests
+    return {} unless req.present?
+    structure(JSON.parse(req))
+  end
+
   def responses
+    return {} unless res.present?
     structure(JSON.parse(res))
   end
 
@@ -19,7 +25,11 @@ class Datum < ApplicationRecord
     elsif node.class == Array
       return [structure(node.first)]
     else
-      return node.class
+      res = node.class.to_s
+      return 'Unknown' if ['NilClass'].include?(res)
+      return 'Number'  if ['Fixnum'].include?(res)
+      return 'Boolean' if ['TrueClass', 'FalseClass'].include?(res)
+      return res
     end
   end
 end
