@@ -3,3 +3,4 @@ class Instance < ApplicationRecord
     Api::Rocketchat.new(self).login(user, pass)
   end
 end
+

@@ -13,9 +13,10 @@ class Provider
 
   def refresh
     Datum.all.each do |datum|
-      @structures[datum.provider_name.to_sym] ||= {}
-      @structures[datum.provider_name.to_sym][datum.method] ||= {}
-      @structures[datum.provider_name.to_sym][datum.method][datum.path] = {
+      pname = datum.provider_name.to_sym
+      @structures[pname] ||= {}
+      @structures[pname][datum.method] ||= {}
+      @structures[pname][datum.method][datum.path] = {
         requests: {}, 
         responses: datum.responses
       }

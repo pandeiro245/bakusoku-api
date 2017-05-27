@@ -2,11 +2,11 @@ class Datum < ApplicationRecord
   belongs_to :instance
 
   def responses
-    structure(JSON.parse(res)) # Hash
+    structure(JSON.parse(res))
   end
 
   def provider_name
-    'rocketchat' # FIXME
+    instance.provider_name
   end
 
   def structure(node)
@@ -23,3 +23,4 @@ class Datum < ApplicationRecord
     end
   end
 end
+
