@@ -1,5 +1,6 @@
 class Api::Rocketchat
-  def initialize(instance = nil)
+  def initialize(instance = nil, offline=false)
+    @offline = offline
     unless instance.present?
       provider = Provider.find_by(name: 'rocketchat')
       instance = Instance.find_by(provider_id: provider.id)
@@ -24,17 +25,21 @@ class Api::Rocketchat
 
   def get_channels
     path = '/api/v1/channels.list'
-    res = `curl -H "X-Auth-Token: #{@user.token}" \
-         -H "X-User-Id: #{@user.key}" \
-              https://#{@instance.host}#{path}`
     datum = Datum.find_or_create_by!(
       instance_id: @instance.id,
       path: path,
       method: 'GET',
       req: nil,
     )
-    datum.res = res
-    datum.save!
-    res = JSON.parse(res)
+    if @offline
+      res = datum.res 
+    else
+      res = `curl -H "X-Auth-Token: #{@user.token}" \
+           -H "X-User-Id: #{@user.key}" \
+                https://#{@instance.host}#{path}`
+      datum.res = res
+      datum.save!
+    end
+    JSON.parse(res)
   end
 end
