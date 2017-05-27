@@ -4,6 +4,7 @@ class CreateProviders < ActiveRecord::Migration[5.1]
       t.string :name
       t.string :host
       t.text :memo
+      t.string :key
 
       t.timestamps
     end
