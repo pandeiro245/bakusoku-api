@@ -12,11 +12,10 @@
 
 ActiveRecord::Schema.define(version: 20170527053028) do
 
-  create_table "providers", force: :cascade do |t|
+  create_table "instances", force: :cascade do |t|
     t.string "name"
     t.string "host"
     t.text "memo"
-    t.string "key"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
