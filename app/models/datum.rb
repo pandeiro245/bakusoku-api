@@ -1,5 +1,6 @@
 class Datum < ApplicationRecord
   belongs_to :instance
+  delegate :provider_name, to: :instance
 
   def requests
     return {} unless req.present?
@@ -9,10 +10,6 @@ class Datum < ApplicationRecord
   def responses
     return {} unless res.present?
     structure(JSON.parse(res))
-  end
-
-  def provider_name
-    instance.provider_name
   end
 
   def structure(node)
