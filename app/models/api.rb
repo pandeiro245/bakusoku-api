@@ -1,5 +1,5 @@
 class Api
-  def initialize(instance = nil)
+  def initialize(force_pull = false, instance = nil)
     provider_name = self.class.to_s.split('::').last.downcase
     unless instance.present?
       instance = Instance.find_or_create_by(provider_name: provider_name)
@@ -55,14 +55,50 @@ class Api
 
     datum = Datum.find_by(params)
 
-    uri = path
-    uri += '?' + req.to_a.map{|i| "#{i.first}=#{i.last}" }.join('&') if req.present?
+    if !datum || @force_pull
+      uri = path
+      datum = Datum.find_or_create_by(
+        instance_id: @instance.id,
+        path: path,
+        method: params[:method],
+        req: params[:req]
+      )
 
-    unless datum
-      params[:res] = @api.get(uri).response.env[:body].to_json
-      datum = Datum.create(params)
+      req[:limit] = @max_limit if @max_limit
+
+      if req.present?
+        uri += '?' + req.to_a.map{|i| "#{i.first}=#{i.last}" }.join('&')
+      end
+
+      items = @api.get(uri).response.env[:body]
+
+      if !req[:offset].nil?
+        array_key = path.split('/').last
+        req[:offset] += 1
+
+        res = items
+        array_previous = items[array_key]
+        offset = req[:offset]
+        uri += '?' + req.to_a.map{|i| "#{i.first}=#{i.last}" }.join('&')
+        array_next = @api.get(uri).response.env[:body][array_key]
+        while array_next.present? && res[array_key].count != (res[array_key] + array_next).uniq.count
+          res[array_key] += array_next
+          res[array_key].uniq!
+          array_previous = array_next
+          req[:offset] += 1
+          uri += '?' + req.to_a.map{|i| "#{i.first}=#{i.last}" }.join('&')
+          array_next = @api.get(uri).response.env[:body][array_key]
+        end
+      else
+        res = items
+      end
+
+      params[:res] = res.to_json
+      datum.create!(params)
     end
+
     JSON.parse(datum.res)
+    puts 'done'
   end
 
   def login
@@ -77,7 +113,7 @@ class Api
     @api = OAuth2::AccessToken.new(@client, token)
     user = User.find_or_create_by(
       instance_id: @instance.id,
-      key:         me['user']['email']
+      # key:         me['user']['email']
     )
     user.token = token
     user.save!
