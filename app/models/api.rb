@@ -1,5 +1,6 @@
 class Api
   def initialize(instance = nil)
+    @redirect_uri = 'urn:ietf:wg:oauth:2.0:oob'
     provider_name = self.class.to_s.split('::').last.downcase
     unless instance.present?
       instance = Instance.find_or_create_by(provider_name: provider_name)
@@ -29,8 +30,8 @@ class Api
 
     options = {
       site: "https://#{@instance.host}",
-      authorize_url: '/oauth/authorize',
-      token_url: '/oauth/token'
+      authorize_url: @auth_path || '/oauth/authorize',
+      token_url: @token_path || '/oauth/token'
     }
 
     @client = OAuth2::Client.new(
@@ -85,13 +86,13 @@ class Api
 
   def get_token
     @token_host ||= @api_host
-    url = "https://#{@token_host}/oauth/authorize?client_id=#{@instance.consumer_key}&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&response_type=code"
+    url = "https://#{@token_host}#{@auth_path || '/oauth/authorize'}?client_id=#{@instance.consumer_key}&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&response_type=code&scope=write"
     puts("Please access #{url}")
     code = $stdin.gets.chomp
     params = {
       grant_type: 'authorization_code',
       code: code,
-      redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
+      redirect_uri: @redirect_uri,
       headers: {
         'Content-Type' => 'application/json',
         'Authorization' => HTTPAuth::Basic.pack_authorization(
