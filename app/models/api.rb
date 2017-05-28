@@ -46,7 +46,7 @@ class Api
     login
   end
 
-  def get(path, req)
+  def get(path, req={})
     params = {
       instance_id: @instance.id,
       path: path,
