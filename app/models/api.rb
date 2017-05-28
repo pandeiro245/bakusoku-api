@@ -77,13 +77,14 @@ class Api
     @api = OAuth2::AccessToken.new(@client, token)
     user = User.find_or_create_by(
       instance_id: @instance.id,
-      key:         me['user']['email']
+      # key:         me['user']['email']
     )
     user.token = token
     user.save!
   end
 
   def get_token
+    @token_host ||= @api_host
     url = "https://#{@token_host}/oauth/authorize?client_id=#{@instance.consumer_key}&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&response_type=code"
     puts("Please access #{url}")
     code = $stdin.gets.chomp
