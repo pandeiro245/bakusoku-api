@@ -1,27 +1,34 @@
 class Api::Freee < Api
-  def initialize
+  def initialize(force_pull = false, instance = nil)
     @token_host = 'secure.freee.co.jp'
     @api_host   = 'api.freee.co.jp'
     @secret_url = 'https://secure.freee.co.jp/oauth/applications'
+    @max_limit = 100
+    @force_pull = force_pull
 
     super
 
-    @indexes = {
-      account_items: {company_id: company_id},
-      banks: {},
-      companies: {company_id: company_id},
-      deals: {company_id: company_id},
-      items: {company_id: company_id},
-      journals: {company_id: company_id, download_type: 'csv'},
-      partners: {company_id: company_id},
-      sections: {company_id: company_id},
-      tags: {company_id: company_id},
-      taxes: {company_id: company_id},
-      transfers: {company_id: company_id},
-      wallet_txns: {company_id: company_id},
-      walletables: {company_id: company_id},
-    }
+    # @indexes = {
+    #   account_items: {company_id: company_id},
+    #   banks: {},
+    #   companies: {company_id: company_id},
+    #   deals: {company_id: company_id},
+    #   items: {company_id: company_id},
+    #   journals: {company_id: company_id, download_type: 'csv'},
+    #   partners: {company_id: company_id},
+    #   sections: {company_id: company_id},
+    #   tags: {company_id: company_id},
+    #   taxes: {company_id: company_id},
+    #   transfers: {company_id: company_id},
+    #   wallet_txns: {company_id: company_id, offset: 0},
+    #   walletables: {company_id: company_id},
+    # }
     # TODO: https://secure.freee.co.jp/developers/api/doc/v1.0/selectables/index.html
+  end
+
+  def get_one index, params=nil
+    params = {company_id: company_id, offset: 0} unless params
+    get("/api/1/#{index}", params)
   end
 
   def get_all
